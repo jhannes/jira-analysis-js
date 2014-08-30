@@ -58,7 +58,7 @@ for (var i = 0; i < projects.length; i++) {
           var status = _.find(history.items, function(item) { return item.field === 'status'; });
           if (status) {
             var status = statuses[status.toString] || ("!!!" + status.toString);
-            issue.lastChange = new Date(history.created).toISOString().substring(0, 10);
+            issue.lastChange = moment(history.created).format("GGGG[-w]WW");
             if (status !== currentStatus) {
               issue[status] = moment(history.created).format("GGGG[-w]WW");              
             }
