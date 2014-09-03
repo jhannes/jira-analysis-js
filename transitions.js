@@ -30,6 +30,9 @@ for (var i = 0; i < projects.length; i++) {
 
       for (var i = 0; i < body.issues.length; i++) {
         var issueJson = body.issues[i];
+        var key = issueJson.key.replace(/\d+/, function(a) {
+          var res = ("000" + a); res = res.substring(res.length-3); return res;
+        });
         var issue = {
           project: issueJson.fields.project.name,
           projectKey: issueJson.fields.project.key,
@@ -40,7 +43,7 @@ for (var i = 0; i < projects.length; i++) {
           status: statuses[issueJson.fields.status.name] || ("!!!" + issueJson.fields.status.name),
           statusName: issueJson.fields.status.name,
           lastChange: moment(issueJson.fields.created).format("GGGG[-w]WW"),
-          description: issueJson.fields.summary
+          description: key + " " + issueJson.fields.summary
         };
         if (issue.issuetype.indexOf('-') === 0) {
           issue.issuetype = "'" + issue.issuetype;
@@ -48,8 +51,8 @@ for (var i = 0; i < projects.length; i++) {
         if (issueJson.fields.resolutiondate) {
           issue.resolutiondate = new Date(issueJson.fields.resolutiondate).toISOString().substring(0, 10);
         }
-        for (var key = 0; key < _.values(statuses).length; key++) {
-          issue[_.values(statuses)[key]] = null;
+        for (var key = 0; key < statusCodes.length; key++) {
+          issue[statusCodes[key]] = null;
         }
 
         var currentStatus = ""
@@ -65,7 +68,9 @@ for (var i = 0; i < projects.length; i++) {
             currentStatus = status;
           }
         };
-
+        for (var j = statusCodes.length - 2; j >= 0; j--) {
+        	if (!issue[statusCodes[j]]) issue[statusCodes[j]] = issue[statusCodes[j+1]];
+        };
         console.log(_.collect(fields, function(f) { return issue[f]; }).join(";"));
       }
     });
