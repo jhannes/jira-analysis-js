@@ -23,7 +23,7 @@ console.log(fields.join(';'));
 for (var i = 0; i < projects.length; i++) {
 
   (function(project) {
-    var url = 'rest/api/2/search?jql=project=' + project + '&maxResults=1500&expand=changelog';
+    var url = 'rest/api/2/search?jql=project=' + project + '+ORDER+BY+updatedDate+desc&maxResults=1500&expand=changelog';
     client.get(url, function(err, res, body) {
       console.error("Getting transitions for " + project + ": " + url);
       if (err) return console.log(err);
@@ -54,6 +54,7 @@ for (var i = 0; i < projects.length; i++) {
         for (var key = 0; key < statusCodes.length; key++) {
           issue[statusCodes[key]] = null;
         }
+        issue[statusCodes[0]] = issue.lastChange;
 
         var currentStatus = ""
         for (var j = 0; j < issueJson.changelog.histories.length; j++) {

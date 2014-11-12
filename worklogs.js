@@ -6,7 +6,7 @@ var teams = require('./jira-settings').teams;
 
 for (var i = 0; i < projects.length; i++) {
   (function(project) {
-    var url = 'rest/api/2/search?jql=project=' + project + '&maxResults=1500&fields=project,parent';
+    var url = 'rest/api/2/search?jql=project=' + project + '+ORDER+BY+updatedDate+desc&maxResults=1500&fields=project,parent';
     client.get(url, function(err, res, body) {
       console.error("Getting worklog for " + project + ": " + url);
       if (err) return console.log(err);
